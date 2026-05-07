@@ -7,23 +7,39 @@ import bcrypt from "bcryptjs";
 import multer from "multer";
 import { randomUUID } from "node:crypto";
 import archiver from "archiver";
-import db from "./src/server/db.ts";
 import { authenticate, generateToken, isAdmin } from "./src/server/auth.ts";
 import type { AuthRequest } from "./src/server/auth.ts";
+import { initDb } from "./src/server/db.ts";
 
 const PORT = Number(process.env.PORT) || 3000;
 const DATA_DIR = path.resolve(process.env.DATA_DIR || './data');
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-
 async function startServer() {
+  console.log("Starting Luvia Drive server...");
+  console.log(`[Env] NODE_ENV: ${process.env.NODE_ENV}`);
+  console.log(`[Env] PORT: ${process.env.PORT || 3000}`);
+  console.log(`[Env] DATA_DIR: ${process.env.DATA_DIR || './data'}`);
+  console.log(`[Debug] bcrypt loaded: ${!!bcrypt}`);
+  console.log(`[Debug] multer loaded: ${!!multer}`);
+  
+  let db: any;
+  try {
+    db = initDb();
+  } catch (err) {
+    console.error("Failed to initialize database. Server cannot start.");
+    process.exit(1);
+  }
+
   const app = express();
   app.use(express.json());
   app.use(cookieParser());
 
+  // Health check for Docker/etc
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", uptime: process.uptime() });
+  });
+
+  console.log("[Server] Registering storage helpers...");
   const getStorage = (userId: string) => {
     const userDir = path.join(DATA_DIR, userId);
     if (!fs.existsSync(userDir)) {
