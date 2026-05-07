@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: luviadrive
+    ports:
+      - "3000:3000"
+    volumes:
+      - ${DATA_DIR:-./data}:${DATA_DIR:-/app/data}
+    env_file:
+      - .env
+    restart: unless-stopped

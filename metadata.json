@@ -1,0 +1,6 @@
+{
+  "name": "Luvia Drive",
+  "description": "A high-performance, multi-user file server with secure sharing, admin management, and per-user data isolation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

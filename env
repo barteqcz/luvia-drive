@@ -1,0 +1,12 @@
+# DATA_DIR: Path to store files. Used as the host path AND container path for symmetry.
+# Example: /hdd/luvia or ./data
+DATA_DIR=./data
+
+# JWT_SECRET: Secret for signing session tokens
+JWT_SECRET=change-this-to-a-secure-random-string
+
+# NODE_ENV: Set to production for deployments
+NODE_ENV=production
+
+# PORT: The port the app runs on inside the container
+PORT=3000
